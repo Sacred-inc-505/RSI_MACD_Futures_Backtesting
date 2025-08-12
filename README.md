@@ -1,61 +1,159 @@
-# ZRSIMACD (modular) — RSI/MACD утилиты и сбор котировок
 
-Репозиторий упакован в пакет со структурой `src/`. Все старые скрипты сохранены и доступны как подкоманды CLI.
+## 🌐 Languages / Языки
+- [English](#english)
+- [Русский](#русский)
 
-## Установка (локально)
-```bash
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -U pip
-pip install -e .
-cp .env.example .env  # заполните TINKOFF_TOKEN
-mkdir -p data && cp src/zrsimacd/scripts/../..//data/tickers.txt.example data/tickers.txt 2>/dev/null || true
+---
+
+# English
+
+## 📌 Project Overview
+
+This project implements an **algorithmic trading strategy** based on the **RSI** and **MACD** technical indicators for analyzing historical futures data.  
+The goal is to **automate the search for trading signals** and **evaluate the profitability** of the strategy, including broker commissions.
+
+This repository demonstrates skills in **Python**, **pandas**, **pandas_ta**, backtesting, trading strategy development, and data visualization.
+
+> 💱 All amounts have been converted from Russian rubles (₽) to approximate USD values at ~90 ₽/$ for international readability.
+
+---
+
+### 🎯 Project Objectives
+- Automatic calculation of RSI and MACD on historical data.
+- Generation of BUY and SELL signals based on predefined conditions:
+  - **BUY** — RSI increases for 4 consecutive periods, MACD_Diff changes sign from negative to positive.
+  - **SELL** — RSI decreases for 4 consecutive periods, MACD_Diff changes sign from positive to negative.
+- “Smart” trade exit logic:
+  - Exit when MACD_Diff changes unfavorably.
+  - If no exit signal appears — force close after 6 candles (24 hours on 4h timeframe).
+- Profit calculation assuming full capital allocation per trade (~$5,500) and broker commission.
+- Report generation:
+  - Detailed CSV for each trade.
+  - Summary table with financial results per instrument.
+
+---
+
+### 🛠 How It Works
+1. Load historical market data (CSV or via Tinkoff Invest API).
+2. Preprocess data using `pandas`.
+3. Calculate indicators with `pandas_ta`.
+4. Identify trading signals based on RSI and MACD_Diff rules.
+5. Manage trades:
+   - Dynamic exit based on MACD_Diff.
+   - Forced close after N candles.
+6. Calculate profit, accounting for capital and 0.005% round-trip commission.
+7. Save reports and visualize results.
+
+---
+
+### 📂 Data Paths
+Files should be placed as follows:
+- Ticker list: `data/tickers.txt`
+- API token for Tinkoff Invest: `token.txt`
+- Directory for saving market data: `SBERBANK_FUTURES` (created automatically)
+
+Example structure:
+```
+project_root/
+│
+├─ data/
+│  └─ tickers.txt
+├─ token.txt
+├─ SBERBANK_FUTURES/
+│   └─ ... (downloaded quotes)
 ```
 
-## Использование
-```bash
-# Загрузка свечей через Tinkoff
-zrsimacd fetch
+---
 
-# Работа с фьючерсами
-zrsimacd futures
+## 📊 Backtest Results
 
-# Расчёт индикаторов по CSV
-zrsimacd indicators
+### Sberbank Futures (Q4 2020 — Q2 2025)
+- **Total trades:** 284  
+- **Starting balance:** ~$5,500  
+- **Final balance:** ~$21,800  
+- **Average annual return:** ~65% (~$3,600/year)  
+- **Best year:** 2022, ~107% annual return (~$6,000/year)  
 
-# Финальный анализ RSI/MACD
-zrsimacd analyze
+![Sberbank Futures Trading Results](docs/sber_futures.png)
 
-# Отчёты по трейдам
-zrsimacd report
+---
+
+### Gazprom Futures (Q1 2021 — Q2 2025)
+- **Total trades:** 250  
+- **Starting balance:** ~$5,500  
+- **Final balance:** ~$5,900  
+- **Average annual return in profitable years:** ~26% (~$1,450/year)  
+- **Worst year:** 2022, loss of about −$3,500  
+
+![Gazprom Futures Trading Results](docs/gazprom_futures.png)
+
+---
+
+📌 **Note:** The strategy was tested on historical data with broker commissions applied, assuming full capital allocation per trade.  
+Charts reflect the year-by-year equity curve.
+
+---
+
+## 📜 License
+This project is released under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+# Русский
+
+## 📌 Описание проекта
+
+Проект реализует алгоритмическую торговую стратегию на основе технических индикаторов **RSI** и **MACD** для анализа исторических данных по фьючерсам.  
+Цель — автоматизировать поиск торговых сигналов и оценить прибыльность стратегии с учётом комиссий брокера.
+
+---
+
+### 🎯 Задачи проекта
+- Автоматический расчёт RSI и MACD на исторических данных.
+- Генерация сигналов BUY и SELL по заданным условиям:
+  - **BUY** — RSI растёт 4 периода подряд, MACD_Diff меняет знак с отрицательного на положительный.
+  - **SELL** — RSI падает 4 периода подряд, MACD_Diff меняет знак с положительного на отрицательный.
+- «Умный» выход из сделки:
+  - Закрытие позиции при неблагоприятном изменении MACD_Diff.
+  - Если сигналов на выход нет — принудительное закрытие через 6 свечей (24 часа на ТФ 4h).
+- Расчёт прибыли с учётом торговли на всю сумму капитала (500 000 руб. на сделку) и комиссий брокера.
+- Формирование отчётов:
+  - Детализированный CSV по каждой сделке.
+  - Сводная таблица с результатами по каждому инструменту.
+
+---
+
+### 🛠 Как это работает
+1. Загрузка данных (CSV или через Tinkoff Invest API).
+2. Предобработка данных с помощью `pandas`.
+3. Расчёт индикаторов с помощью `pandas_ta`.
+4. Поиск сигналов по условиям RSI и MACD_Diff.
+5. Сопровождение сделок:
+   - Динамический выход по MACD_Diff.
+   - Принудительное закрытие через N свечей.
+6. Подсчёт прибыли с учётом капитала и комиссии 0,005% за цикл сделки.
+7. Сохранение отчётов и визуализация результатов.
+
+---
+
+### 📂 Путь для данных
+Файлы должны располагаться по следующим путям:
+- Список тикеров: `data/tickers.txt`
+- Токен для Tinkoff Invest API: `token.txt`
+- Папка для сохранения данных: `SBERBANK_FUTURES` (создаётся автоматически)
+
+Пример структуры:
+```
+project_root/
+│
+├─ data/
+│  └─ tickers.txt
+├─ token.txt
+├─ SBERBANK_FUTURES/
+│   └─ ... (скачанные котировки)
 ```
 
-Любые аргументы после подкоманды пробрасываются в оригинальный скрипт, например:
-```bash
-zrsimacd fetch --help
-```
-
-## Структура
-- `src/zrsimacd/scripts/` — первичные скрипты (без переписывания логики).
-- `src/zrsimacd/cli.py` — единая точка входа (CLI).
-- `.env.example` — задаёт `TINKOFF_TOKEN`, `TICKERS_FILE` и пр.
-- `pyproject.toml` — метаданные и зависимости.
-
-
-## 📂 Путь для данных
-
-- **Список тикеров** — файл `data/tickers.txt` (каждый тикер на новой строке, пример в `data/tickers.txt.example`).
-- **Токен Tinkoff Invest API** — храните в `.env` (`TINKOFF_TOKEN=...`) или в `token.txt` (не рекомендуется).
-- **Котировки** — после выполнения команды `zrsimacd fetch` будут сохранены в папке `SBERBANK_FUTURES/` в корне проекта.  
-  Внутри будет структура по интервалам из `INTERVALS` (например: `SBERBANK_FUTURES/4_hour/SBER.csv`).
-
-**Пример структуры:**
-```
-SBERBANK_FUTURES/
-└── 4_hour/
-    ├── SBER.csv
-    ├── GAZP.csv
-    └── ...
-```
+---
 
 ## 📊 Результаты бэктестов
 
@@ -84,5 +182,7 @@ SBERBANK_FUTURES/
 📌 **Примечание:** стратегия тестировалась на исторических данных с применением комиссий брокера, торговля велась на весь капитал в сделке.  
 Графики отражают динамику роста/снижения баланса по годам.
 
-## Лицензия
-MIT
+---
+
+## 📜 Лицензия
+Этот проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE) для деталей.
