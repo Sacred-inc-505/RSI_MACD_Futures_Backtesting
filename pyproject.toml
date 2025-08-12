@@ -9,7 +9,7 @@ description = "RSI/MACD toolkit & Tinkoff candles fetcher"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
-authors = [{name = "<YOUR NAME>"}]
+authors = [{name = "<Dmitrii Lin>"}]
 dependencies = [
     "pandas>=2.0",
     "pandas-ta>=0.3",
